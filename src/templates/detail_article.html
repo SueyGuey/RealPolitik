@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'home.css' %}"/>
+<div class = "content_block">
+	<a href = "{{ article.url }}" target="_blank">
+		<img class = "pic" src = "{{ article.image_url }}">
+	</a>
+	<div class = "txt-float-right">
+		<a href = "{{ article.url }}" target="_blank">
+			<h4 class = "title"> {{ article.title }} </h4>
+		</a>
+		<div class = "site-info">
+			<p class = "author"> {{ article.author }}</p>
+			<h5 class = "separator"> | </h5>
+			<a class = "website" href = "{{ article.site_url }}" target="_blank">{{ article.site }} </a>
+		</div>
+	</div>
+</div>
+
+<form action = "" method = "post">
+	{% csrf_token %}
+	{{ form }}
+	<input type = "submit">
+	}
+</form>
+
+<h4> Comments: </h4>
+{% if not article.comments.all %}
+	<p> No Comments Yet </p>
+{% else %}
+	{% for comment in article.comments.all %}
+		<p class = "comment_heading"> {{ comment.username }} - {{ comment.date }} </p>
+		<p> {{ comment.content }}
+	{% endfor %}
+{% endif %}
+
+{% endblock content %}

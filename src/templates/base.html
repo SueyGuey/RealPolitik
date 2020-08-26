@@ -1,0 +1,57 @@
+{% load static %}
+
+<!-- base template -->
+<!DOCTYPE html>
+<html lang = "en" >
+	<head>
+		<!--bootstrap -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<link rel="stylesheet" type="text/css" href="{% static 'main.css' %}"/>
+
+	    <title>RealPolitik</title>
+	</head>
+
+	<body>
+		<div id = "header">
+			<div id = "center">
+				<div id = "name">
+					<h1> RealPolitik </h1>
+				</div>
+
+				<div id = "navigation">
+					<ul id = "info">
+				        <li><a href="{% url 'home' %}">Home</a></li>
+				      	<li><a href="{% url 'about' %}">About</a></li>
+				       	<li><a href="{% url 'contact' %}">Contact</a></li>
+				       	<form method = "get">
+				       		<input class = "search" type = "text" name = "q" id = "qid" placeholder="Search">
+				       	</form>
+			        </ul>
+			        
+				   	{% if user.is_authenticated %}
+				   		<div id = "auth">
+					        <ul id = "profile">
+					            <li><a href="{% url 'profile' %}"><img src="{{ user.profile.pfp.url }}"></a></li>
+					            <li><a href="{% url 'logout' %}">Logout</a></li>
+					        </ul>
+				 	   </div>
+				    {% else %}
+				   		<ul id = "profile">
+				          	<li><a href="{% url 'login' %}">Login</a></li>
+				            <li><a href="{% url 'register' %}">Register</a></li>
+				       	</ul>
+				    {% endif %}
+			   	</div>
+		   	</div>
+		</div>
+		<div id = "container">
+			{% block content %}
+				replace me 
+			{% endblock %} 
+		</div>
+	</body>
+
+	<script type = "text/javascript">
+		document.getElementById("qid").value = "{{query}}"
+	</script>
+</html>

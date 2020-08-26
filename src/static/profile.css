@@ -1,0 +1,16 @@
+#full-info {
+	width: 800px;
+}
+
+#pfp {
+	float: left;
+}
+
+#pfp img {
+	display: inline-block;
+  	position: relative;
+  	width: 80px;
+  	height: 80px;
+  	overflow: hidden;
+  	border-radius: 50%;
+}

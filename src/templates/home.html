@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'home.css' %}"/>
+<div class = "float-right">
+	<div id = "sidebar">
+		<div id = "sidetitle">
+			<p>By Region</p>
+		</div>
+		<div id = "loc">
+			<ul>
+				<li><a href="#"> Asia </a></li>
+				<li><a href="#"> Africa </a></li>
+				<li><a href="#"> Europe </a></li>
+				<li><a href="#"> Oceania </a></li>
+				<li><a href="#"> South America </a></li>
+				<li><a href="#"> North America </a></li>
+		    </ul>
+		</div>
+	</div>
+</div>
+<div class = "alertcontainer">
+	{% if messages %}
+		{% for message in messages %}
+			<div class="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+	{% endif %}
+</div>
+<div id = "content">
+	{% if articles %}
+	<h1 id = "your_feed"> Latest News</h1>
+	<a href = "{% url 'refresh' %}" id = "refresh"> Refresh Feed </a>
+
+	{% for article in articles %} 
+		<div class = "content_block">
+			<a href = "{{ article.url }}" target="_blank">
+				<img class = "pic" src = "{{ article.image_url }}">
+			</a>
+			<div class = "txt-float-right">
+				<a href = "{{ article.url }}" target="_blank">
+					<h4 class = "title"> {{ article.title }} </h4>
+				</a>
+				<div class = "site-info">
+					<p class = "author"> {{ article.author }}</p>
+					<h5 class = "separator"> | </h5>
+					<a class = "website" href = "{{ article.site_url }}" target="_blank">{{ article.site }} </a>
+				</div>
+				<a class = "comment" href = "{% url 'ArticleDetail' article.pk %}">Comment </a>
+			</div>
+		</div>
+	{% endfor %}
+	{% else %}
+		<p> No results </p>
+	{% endif %}
+
+</div>
+
+{% endblock content %}
