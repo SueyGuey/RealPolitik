@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from bs4 import BeautifulSoup
-from django.views.generic import DetailView, FormView
+from django.views.generic import DetailView, FormView, CreateView
 from news.models import Article, Comment
 from django.db import IntegrityError
 from django.db.models import Q
 from .forms import AddComment
 import requests
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 requests.packages.urllib3.disable_warnings()
 def refresh(request):
@@ -61,20 +62,58 @@ def home(request, *args, **kwargs):
 
 	return render(request,"home.html",context)
 
-class HomeDetailView(FormView, DetailView):
+#viewing each article with its comments
+class HomeDetailView(DetailView):
+	model = Article
 	template_name = 'detail_article.html'
+
+class CommentView(CreateView):
+	model = Article
+	template_name = 'add_comment.html'
+	form_class = AddComment
+
+	def form_valid(self,form):
+		form.instance.user = self.kwargs['pk']
+		return super().form_valid(form)
+
+
+	#def get_success_url(self):#goes back to page
+	#	return reverse('ArticleDetail', kwargs={'pk': self.kwargs['pk']})
+
+
+"""
+#viewing each article with its comments
+class HomeDetailView(FormView, DetailView):
 	model = Article
 	form_class = AddComment
+	template_name = 'detail_article.html'
 
 	def get_context_data(self, **kwargs):
 		context = super(HomeDetailView, self).get_context_data(**kwargs)
 		context['form'] = self.get_form()
 		return context
+
 	def post(self, request, *args, **kwargs):
 		return FormView.post(self, request, *args, **kwargs)
 
-	def get_success_url(self):
-		return redirect('home')
+	def get_success_url(self): #goes back to page
+		return reverse('ArticleDetail', kwargs={'pk': self.kwargs['pk']})
+
+class ArticleFormView(FormView):
+	form_class = AddComment
+
+	def get_success_url(self):#goes back to page
+		return reverse('ArticleDetail', kwargs={'pk': self.kwargs['pk']})
+
+class HomeDetailView(DetailView):
+	model = Article
+	template_name = 'detail_article.html'
+
+	def get_context_data(self, **kwargs):
+		context = super(HomeDetailView, self).get_context_data(**kwargs)
+		context['form'] = ArticleFormView
+		return context"""
+
 
 def contact(request):
 	return render(request,"contact.html")

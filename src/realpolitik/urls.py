@@ -19,12 +19,13 @@ from django.contrib.auth import views as auth_view
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls import url
 
-from pages.views import home, contact, about, HomeDetailView
+from pages.views import home, contact, about, HomeDetailView, CommentView
 from accounts import views as acc_view
 
 urlpatterns = [
-	path('', include("pages.urls")),
+	path('', include("pages.urls"), name = "home"),
     path('register/', acc_view.register, name = "register"),
     path('login/', auth_view.LoginView.as_view(template_name = 'login.html'), name = "login"),
     path('logout/', auth_view.LogoutView.as_view(template_name = 'logout.html'), name = "logout"),
@@ -35,7 +36,8 @@ urlpatterns = [
     path('profile/', acc_view.profile, name = "profile" ),
     path('contact/', contact, name = "contact" ),
     path('about/', about, name = "about" ),
-    path('<int:pk>', HomeDetailView.as_view(), name = "ArticleDetail")
+    path('<int:pk>/', HomeDetailView.as_view(), name = "ArticleDetail"),
+    path('<int:pk>/comment/', CommentView.as_view(), name = "PostComment")
 ]
 
 urlpatterns += staticfiles_urlpatterns()

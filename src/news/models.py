@@ -15,6 +15,7 @@ class Article(models.Model):
 	def __str__(self):
 		return self.title
 
+
 class Comment(models.Model):
 	post = models.ForeignKey(Article,related_name = "comments", on_delete = models.CASCADE)
 	username = models.ForeignKey(User, on_delete = models.CASCADE)
@@ -22,4 +23,4 @@ class Comment(models.Model):
 	date = models.DateTimeField(auto_now_add = True)
 
 	def __str__(self):
-		return self.post.title + '-' + self.username
+		return self.post.title + ' - ' + str(self.username)
