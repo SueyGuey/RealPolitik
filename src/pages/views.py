@@ -68,17 +68,19 @@ class HomeDetailView(DetailView):
 	template_name = 'detail_article.html'
 
 class CommentView(CreateView):
-	model = Article
+	model = Comment
 	template_name = 'add_comment.html'
 	form_class = AddComment
 
 	def form_valid(self,form):
-		form.instance.user = self.kwargs['pk']
+		#automatically have the post id
+		form.instance.post_id = self.kwargs['pk']
+		#automatically add username
+		form.instance.user = self.request.user
 		return super().form_valid(form)
 
-
-	#def get_success_url(self):#goes back to page
-	#	return reverse('ArticleDetail', kwargs={'pk': self.kwargs['pk']})
+	def get_success_url(self):#goes back to page
+		return reverse('ArticleDetail', kwargs={'pk': self.kwargs['pk']})
 
 
 """

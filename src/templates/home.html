@@ -30,10 +30,10 @@
 	{% endif %}
 </div>
 <div id = "content">
-	{% if articles %}
+	
 	<h1 id = "your_feed"> Latest News</h1>
 	<a href = "{% url 'refresh' %}" id = "refresh"> Refresh Feed </a>
-
+	{% if articles %}
 	{% for article in articles %} 
 		<div class = "content_block">
 			<a href = "{{ article.url }}" target="_blank">
