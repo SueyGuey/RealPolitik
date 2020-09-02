@@ -30,11 +30,34 @@ def refresh(request):
 		try:
 			new_article.save()
 		except IntegrityError as e: 
-   			if 'UNIQUE constraint' in str(e.args):
+   			if 'UNIQUE constraint' in str(e.args): #a repeat article
    				pass
    			else:
    				new_article.save()
-		
+	foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
+	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
+	foreign_affairs = foreign_affairs_soup.find_all('div', {'class' : 'magazine-list-item--image-link row'})
+	for headline in foreign_affairs:
+		header = headline.find_all('h3', {'class':'article-card-title font-weight-bold ls-0 mb-0 f-sans'})[0].text
+		link = headline.find_all('a', {'class':'d-block flex-grow-1'})[0]['href']
+		img = headline.find_all('img',{'class':'b-lazy b-lazy-ratio magazine-list-item--image d-none d-md-block'})[0]['data-src']
+		writer = headline.find_all('h4', {'class':'magazine-author font-italic ls-0 mb-0 f-serif'})[0].text
+
+		new_article = Article()
+		new_article.title = header
+		new_article.image_url = img
+		new_article.url = link
+		new_article.author = writer
+		new_article.site = "Foreign Affairs"
+		new_article.site_url = "https://www.foreignaffairs.com"
+		try:
+			new_article.save()
+		except IntegrityError as e: 
+	   		if 'UNIQUE constraint' in str(e.args):
+	   			pass
+	   		else:
+	   			new_article.save()
+
 
 	return redirect("../")
 
