@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from django.db.models import Q
 from .forms import AddComment
 import requests
+from urllib.request import urlopen, Request
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
@@ -28,16 +29,17 @@ def refresh(request):
 		new_article.site = "Foreign Policy"
 		new_article.site_url = "https://foreignpolicy.com"
 		try:
-			new_article.save()
+			new_article.save() #checks for erros
 		except IntegrityError as e: 
    			if 'UNIQUE constraint' in str(e.args): #a repeat article
    				pass
    			else:
    				new_article.save()
+
 	foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
 	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
 	foreign_affairs = foreign_affairs_soup.find_all('div', {'class' : 'magazine-list-item--image-link row'})
-	for headline in foreign_affairs:
+	for headline in foreign_affairs[::-1]:
 		header = headline.find_all('h3', {'class':'article-card-title font-weight-bold ls-0 mb-0 f-sans'})[0].text
 		link = headline.find_all('a', {'class':'d-block flex-grow-1'})[0]['href']
 		img = headline.find_all('img',{'class':'b-lazy b-lazy-ratio magazine-list-item--image d-none d-md-block'})[0]['data-src']
@@ -50,7 +52,48 @@ def refresh(request):
 		new_article.author = writer
 		new_article.site = "Foreign Affairs"
 		new_article.site_url = "https://www.foreignaffairs.com"
-		try:
+		try: 
+			new_article.save()
+		except IntegrityError as e: 
+	   		if 'UNIQUE constraint' in str(e.args):
+	   			pass
+	   		else:
+	   			new_article.save()
+
+	china_power_req = Request("https://chinapower.csis.org/podcasts/", headers = {'User-Agent' : 'Mozilla/5.0'})
+	china_power_page = urlopen(china_power_req).read()
+	china_power_soup = BeautifulSoup(china_power_page, "html.parser")
+	china_power = china_power_soup.find_all('article')
+
+	for headline in china_power[::-1]:
+		header = headline.find_all('h2', {'class':'entry-title'})[0].text
+		link = headline.find_all('a')[0]['href']
+
+		#finding author
+		disc = headline.find_all('p')[0].text #description has the author's name
+		list_disc = disc.split() #find it in the text
+		record = False
+		index = 0
+		list_auth = []
+		while index > -1:
+			tmp = list_disc[index]
+			if tmp == "joins": #ends the name at the join
+				break;
+			if record:
+				list_auth.append(tmp) #add the name
+			if tmp == "episode,": #start at 'episode,'
+				record = True;
+			index = index + 1
+		writer = " ".join(list_auth) + " & Bonnie Glaser"
+
+		new_article = Article()
+		new_article.title = header
+		new_article.image_url = "https://megaphone.imgix.net/podcasts/722b9c2a-e6e1-11ea-a520-3349f6671499/image/uploads_2F1598366366917-v9rdxhpawhc-bee946f884ea9a141d33af2322074d0d_2F_ART_ChinaPower.jpg?ixlib=rails-2.1.2&w=400&h=400"
+		new_article.url = link
+		new_article.author = writer
+		new_article.site = "China Power Podcasts"
+		new_article.site_url = "https://chinapower.csis.org/podcasts/"
+		try: 
 			new_article.save()
 		except IntegrityError as e: 
 	   		if 'UNIQUE constraint' in str(e.args):
