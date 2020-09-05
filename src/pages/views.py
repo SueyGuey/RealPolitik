@@ -16,16 +16,11 @@ def refresh(request):
 	foreign_policy_soup = BeautifulSoup(foreign_policy_req.content, "html.parser")
 	foreign_policy = foreign_policy_soup.find_all('div', {'class': 'excerpt-content--list content-block'})
 	for headline in foreign_policy[::-1]:
-		header = headline.find_all('h3', {'class':'hed'})[0].text
-		link = headline.find_all('a', {'class':'hed-heading -excerpt'})[0]['href']
-		img = headline.find_all('img')[0]['data-src']
-		writer = headline.find_all('a', {'class':'author'})[0].text
-
 		new_article = Article()
-		new_article.title = header
-		new_article.image_url = img
-		new_article.url = link
-		new_article.author = writer
+		new_article.title = headline.find_all('h3', {'class':'hed'})[0].text
+		new_article.url= headline.find_all('a', {'class':'hed-heading -excerpt'})[0]['href']
+		new_article.image_url = headline.find_all('img')[0]['data-src']
+		new_article.author = headline.find_all('a', {'class':'author'})[0].text
 		new_article.site = "Foreign Policy"
 		new_article.site_url = "https://foreignpolicy.com"
 		try:
@@ -40,16 +35,11 @@ def refresh(request):
 	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
 	foreign_affairs = foreign_affairs_soup.find_all('div', {'class' : 'magazine-list-item--image-link row'})
 	for headline in foreign_affairs[::-1]:
-		header = headline.find_all('h3', {'class':'article-card-title font-weight-bold ls-0 mb-0 f-sans'})[0].text
-		link = headline.find_all('a', {'class':'d-block flex-grow-1'})[0]['href']
-		img = headline.find_all('img',{'class':'b-lazy b-lazy-ratio magazine-list-item--image d-none d-md-block'})[0]['data-src']
-		writer = headline.find_all('h4', {'class':'magazine-author font-italic ls-0 mb-0 f-serif'})[0].text
-
 		new_article = Article()
-		new_article.title = header
-		new_article.image_url = img
-		new_article.url = link
-		new_article.author = writer
+		new_article.title = headline.find_all('h3', {'class':'article-card-title font-weight-bold ls-0 mb-0 f-sans'})[0].text
+		new_article.image_url = headline.find_all('img',{'class':'b-lazy b-lazy-ratio magazine-list-item--image d-none d-md-block'})[0]['data-src']
+		new_article.url = headline.find_all('a', {'class':'d-block flex-grow-1'})[0]['href']
+		new_article.author = headline.find_all('h4', {'class':'magazine-author font-italic ls-0 mb-0 f-serif'})[0].text
 		new_article.site = "Foreign Affairs"
 		new_article.site_url = "https://www.foreignaffairs.com"
 		try: 
@@ -60,6 +50,7 @@ def refresh(request):
 	   		else:
 	   			new_article.save()
 
+	#they give a 403 error for other methods
 	china_power_req = Request("https://chinapower.csis.org/podcasts/", headers = {'User-Agent' : 'Mozilla/5.0'})
 	china_power_page = urlopen(china_power_req).read()
 	china_power_soup = BeautifulSoup(china_power_page, "html.parser")
@@ -101,6 +92,34 @@ def refresh(request):
 	   		else:
 	   			new_article.save()
 
+	#for war on the rocks, each div class for hte articles is different
+	warontherocks_req = Request("https://warontherocks.com/", headers = {'User-Agent' : 'Mozilla/5.0'})
+	warontherocks_page = urlopen(warontherocks_req).read()
+	warontherocks_soup = BeautifulSoup(warontherocks_page, "html.parser")
+	warontherocks = warontherocks_soup.find_all('div', {'class' : 'all-posts'})
+
+	#very nice and straight forward html from warontherocks
+	header_ = warontherocks[0].find_all('h3')
+	link_ = warontherocks[0].find_all('a')
+	img_ = warontherocks[0].find_all('img')
+	writer_ = warontherocks[0].find_all('h4')
+
+	for i in range(len(header_)-1,0,-1):
+		new_article = Article()
+		new_article.title = header_[i].text
+		new_article.image_url = img_[i]['src']
+		new_article.url = link_[i]['href']
+		new_article.author = writer_[i].text
+		new_article.site = "War on the Rocks"
+		new_article.site_url = "https://warontherocks.com"
+		print(new_article.title, new_article.image_url, new_article.url, new_article.author)
+		try: 
+			new_article.save()
+		except IntegrityError as e: 
+	   		if 'UNIQUE constraint' in str(e.args):
+	   			pass
+	   		else:
+	   			new_article.save()
 
 	return redirect("../")
 
