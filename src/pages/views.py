@@ -104,12 +104,13 @@ def refresh(request):
 	img_ = warontherocks[0].find_all('img')
 	writer_ = warontherocks[0].find_all('h4')
 
-	for i in range(len(header_)-1,0,-1):
+	for i in range(12,1,-1):
 		new_article = Article()
-		new_article.title = header_[i].text
-		new_article.image_url = img_[i]['src']
-		new_article.url = link_[i]['href']
-		new_article.author = writer_[i].text
+		new_article.title = header_[i-1].text
+		new_article.image_url = img_[i-1]['src']
+		new_article.url = link_[2*i-1]['href']
+		print(link_[2*i-1]['href'])
+		new_article.author = writer_[i-1].text
 		new_article.site = "War on the Rocks"
 		new_article.site_url = "https://warontherocks.com"
 		print(new_article.title, new_article.image_url, new_article.url, new_article.author)
