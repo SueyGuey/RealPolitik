@@ -57,9 +57,6 @@ def refresh(request):
 	china_power = china_power_soup.find_all('article')
 
 	for headline in china_power[::-1]:
-		header = headline.find_all('h2', {'class':'entry-title'})[0].text
-		link = headline.find_all('a')[0]['href']
-
 		#finding author
 		disc = headline.find_all('p')[0].text #description has the author's name
 		list_disc = disc.split() #find it in the text
@@ -75,13 +72,12 @@ def refresh(request):
 			if tmp == "episode,": #start at 'episode,'
 				record = True;
 			index = index + 1
-		writer = " ".join(list_auth) + " & Bonnie Glaser"
 
 		new_article = Article()
-		new_article.title = header
+		new_article.title = headline.find_all('h2', {'class':'entry-title'})[0].text
 		new_article.image_url = "https://megaphone.imgix.net/podcasts/722b9c2a-e6e1-11ea-a520-3349f6671499/image/uploads_2F1598366366917-v9rdxhpawhc-bee946f884ea9a141d33af2322074d0d_2F_ART_ChinaPower.jpg?ixlib=rails-2.1.2&w=400&h=400"
-		new_article.url = link
-		new_article.author = writer
+		new_article.url = headline.find_all('a')[0]['href']
+		new_article.author = " ".join(list_auth) + " & Bonnie Glaser"
 		new_article.site = "China Power Podcasts"
 		new_article.site_url = "https://chinapower.csis.org/podcasts/"
 		try: 
@@ -109,11 +105,9 @@ def refresh(request):
 		new_article.title = header_[i-1].text
 		new_article.image_url = img_[i-1]['src']
 		new_article.url = link_[2*i-1]['href']
-		print(link_[2*i-1]['href'])
 		new_article.author = writer_[i-1].text
 		new_article.site = "War on the Rocks"
 		new_article.site_url = "https://warontherocks.com"
-		print(new_article.title, new_article.image_url, new_article.url, new_article.author)
 		try: 
 			new_article.save()
 		except IntegrityError as e: 
@@ -121,6 +115,36 @@ def refresh(request):
 	   			pass
 	   		else:
 	   			new_article.save()
+
+	AP_FP_req = Request("https://apnews.com/hub/foreign-policy", headers = {'User-Agent' : 'Mozilla/5.0'})
+	AP_FP_page = urlopen(AP_FP_req).read()
+	AP_IL_req = Request("https://apnews.com/hub/international-relations", headers = {'User-Agent' : 'Mozilla/5.0'})
+	AP_IL_page = urlopen(AP_IL_req).read()
+	AP_FP_soup = BeautifulSoup(AP_FP_page, "html.parser")
+	AP_IL_soup = BeautifulSoup(AP_IL_page, "html.parser")
+	AP = AP_FP_soup.find_all('div', {'data-key': 'feed-card-wire-story-with-image'}) + AP_IL_soup.find_all('div', {'data-key': 'feed-card-wire-story-with-image'})
+	for headline in AP[::-1]:
+		new_article = Article()
+		new_article.title = headline.find_all('h1')[0].text
+		new_article.url= "https://apnews.com" + headline.find_all('a')[0]['href']
+		"""img = headline.find_all('img')
+		print(img)
+		if len(img) == 0:
+			new_article.image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Associated_Press_logo_2012.svg/220px-Associated_Press_logo_2012.svg.png"
+		else:
+			new_article.image_url = img[0]['src']"""
+		#images doesnt work on AP
+		new_article.image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Associated_Press_logo_2012.svg/220px-Associated_Press_logo_2012.svg.png"
+		new_article.author = headline.find_all('span')[0].text
+		new_article.site = "Associated Press"
+		new_article.site_url = "https://apnews.com"
+		try:
+			new_article.save() #checks for erros
+		except IntegrityError as e: 
+   			if 'UNIQUE constraint' in str(e.args): #a repeat article
+   				pass
+   			else:
+   				new_article.save()
 
 	return redirect("../")
 
