@@ -127,15 +127,17 @@ def refresh(request):
 		new_article = Article()
 		new_article.title = headline.find_all('h1')[0].text
 		new_article.url= "https://apnews.com" + headline.find_all('a')[0]['href']
-		"""img = headline.find_all('img')
-		print(img)
+		#img machine broke
+		img = headline.find_all('img', {'class': 'image-0-2-132'})
 		if len(img) == 0:
 			new_article.image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Associated_Press_logo_2012.svg/220px-Associated_Press_logo_2012.svg.png"
 		else:
-			new_article.image_url = img[0]['src']"""
-		#images doesnt work on AP
-		new_article.image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Associated_Press_logo_2012.svg/220px-Associated_Press_logo_2012.svg.png"
-		new_article.author = headline.find_all('span')[0].text
+			new_article.image_url = img[0]['src']
+		list_auth = (headline.find_all('span')[0].text).split(" ")
+		if "GMT" in list_auth:
+			new_article.author = "AP"
+		else:
+			new_article.author = headline.find_all('span')[0].text
 		new_article.site = "Associated Press"
 		new_article.site_url = "https://apnews.com"
 		try:
@@ -165,7 +167,7 @@ def home(request, *args, **kwargs):
 		query = request.GET['q']
 		context['query'] = str(query)
 
-	articles = getQuerySet(query)[::-1]
+	articles = getQuerySet(query)[:-50:-1]
 	context = {
 		'articles': articles
 	}

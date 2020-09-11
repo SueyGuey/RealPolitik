@@ -50,13 +50,13 @@
 }
 
 .content_block {
-	width: 666px;
+	/*width: 666px;*/
+	width: 1000px;
 	height: 200px;
 	float: center;
 	border: 2px solid #9F9E9E;
 	margin-bottom: 10px;
 }
-
 
 .pic {
 	height: 175px;
@@ -70,16 +70,18 @@
 	margin-top: 10px;
 	margin-right: 10px;
 	float: right;
-	width: 430px;
+	/*width: 430px;*/
+	width: 750px;
 }
 
 .title {
 	text-decoration: none;
 	color: #555555;
-	font-size: 20px;
+	font-size: 30px;
 }
 
 .author, .separator, .website {
+	font-size: 20px;
 	display: inline;
 }
 
