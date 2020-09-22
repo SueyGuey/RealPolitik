@@ -1,1 +1,1 @@
-web: gunicorn realpolitik.wsgi
+web: gunicorn realpolitik.wsgi --log-file -
