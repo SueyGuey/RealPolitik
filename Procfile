@@ -1,1 +1,1 @@
-web: gunicorn RealPolitik.wsgi
+web: gunicorn soom.wsgi
