@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import heroku_django
+#import heroku_django
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,15 +21,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+#I changed my secret key fool!
 SECRET_KEY = os.environ.get('SECRET_KEY')
-#'5-!4*i8f=6y8ed_!yp&kicg4c3tv^$6x*h=r#b02etdje*(2@%'
-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://therealpolitik.herokuapp.com']
-
+ALLOWED_HOSTS = []
+#'https://therealpolitik.herokuapp.com'
 
 # Application definition
 
@@ -153,4 +152,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER') #my personal info
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
 
-heroku_django.settings(locals())
+#heroku_django.settings(locals())
