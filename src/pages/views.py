@@ -226,28 +226,21 @@ class HomeDetailView(FormView, DetailView):
 	model = Article
 	form_class = AddComment
 	template_name = 'detail_article.html'
-
 	def get_context_data(self, **kwargs):
 		context = super(HomeDetailView, self).get_context_data(**kwargs)
 		context['form'] = self.get_form()
 		return context
-
 	def post(self, request, *args, **kwargs):
 		return FormView.post(self, request, *args, **kwargs)
-
 	def get_success_url(self): #goes back to page
 		return reverse('ArticleDetail', kwargs={'pk': self.kwargs['pk']})
-
 class ArticleFormView(FormView):
 	form_class = AddComment
-
 	def get_success_url(self):#goes back to page
 		return reverse('ArticleDetail', kwargs={'pk': self.kwargs['pk']})
-
 class HomeDetailView(DetailView):
 	model = Article
 	template_name = 'detail_article.html'
-
 	def get_context_data(self, **kwargs):
 		context = super(HomeDetailView, self).get_context_data(**kwargs)
 		context['form'] = ArticleFormView
