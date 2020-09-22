@@ -1,1 +1,1 @@
-web: gunicorn realpolitik.wsgi
+web: gunicorn RealPolitik.wsgi
