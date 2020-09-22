@@ -28,8 +28,6 @@ def refresh(request):
 		except IntegrityError as e: 
    			if 'UNIQUE constraint' in str(e.args): #a repeat article
    				pass
-   			else:
-   				new_article.save()
 
 	foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
 	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
@@ -47,8 +45,6 @@ def refresh(request):
 		except IntegrityError as e: 
 	   		if 'UNIQUE constraint' in str(e.args):
 	   			pass
-	   		else:
-	   			new_article.save()
 
 	#they give a 403 error for other methods
 	china_power_req = Request("https://chinapower.csis.org/podcasts/", headers = {'User-Agent' : 'Mozilla/5.0'})
@@ -85,10 +81,8 @@ def refresh(request):
 		except IntegrityError as e: 
 	   		if 'UNIQUE constraint' in str(e.args):
 	   			pass
-	   		else:
-	   			new_article.save()
 
-	#for war on the rocks, each div class for hte articles is different
+	#for war on the rocks, each div class for the articles is different
 	warontherocks_req = Request("https://warontherocks.com/", headers = {'User-Agent' : 'Mozilla/5.0'})
 	warontherocks_page = urlopen(warontherocks_req).read()
 	warontherocks_soup = BeautifulSoup(warontherocks_page, "html.parser")
@@ -113,8 +107,6 @@ def refresh(request):
 		except IntegrityError as e: 
 	   		if 'UNIQUE constraint' in str(e.args):
 	   			pass
-	   		else:
-	   			new_article.save()
 
 	AP_FP_req = Request("https://apnews.com/hub/foreign-policy", headers = {'User-Agent' : 'Mozilla/5.0'})
 	AP_FP_page = urlopen(AP_FP_req).read()
@@ -141,12 +133,45 @@ def refresh(request):
 		new_article.site = "Associated Press"
 		new_article.site_url = "https://apnews.com"
 		try:
-			new_article.save() #checks for erros
+			new_article.save() #checks for errors
 		except IntegrityError as e: 
    			if 'UNIQUE constraint' in str(e.args): #a repeat article
    				pass
-   			else:
-   				new_article.save()
+
+   	#lowy institute
+	LI_req = Request("https://www.lowyinstitute.org/the-interpreter/archive", headers = {'User-Agent' : 'Mozilla/5.0'})
+	LI_page = urlopen(LI_req).read()
+	LI_soup = BeautifulSoup(LI_page, "html.parser")
+	LI = LI_soup.find_all('article')
+
+	for headline in LI[::-1]:
+		img = headline.find_all('div',{'class':'article-thumb'})[0]
+		if len(img) == 0:
+			img = headline.find_all('div',{'class':'article-thumb-wrap'})[0]
+		word = [] #getting the link into a list of chars
+		record = False
+		for letter in list(img['style']):
+			if record:
+				word.append(letter)
+			if letter == "'":
+				if record:
+					word.pop() #revmoving the ' at the end
+					break
+				record = True
+
+		new_article = Article()
+		new_article.title = headline.find_all('h2', {'class':'article-title txt-f4 txt-s6 mv-0 pv-xs'})[0].text
+		new_article.url= "https://www.lowyinstitute.org" + headline.find_all('a', {'class':'txt-dn'})[0]['href']
+		new_article.image_url = "".join(word)
+		new_article.author = headline.find_all('a', {'class':'txt-dn'})[1].text
+		new_article.site = "Lowy Institute"
+		new_article.site_url = "https://www.lowyinstitute.org/the-interpreter/archive"
+		
+		try:
+			new_article.save()
+		except IntegrityError as e: 
+   			if 'UNIQUE constraint' in str(e.args):
+   				pass
 
 	return redirect("../")
 
