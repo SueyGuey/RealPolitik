@@ -40,11 +40,11 @@ def refresh(request):
 		new_article.author = headline.find_all('h4', {'class':'magazine-author font-italic ls-0 mb-0 f-serif'})[0].text
 		new_article.site = "Foreign Affairs"
 		new_article.site_url = "https://www.foreignaffairs.com"
-		"""try: 
+		try: 
 			new_article.save()
 		except IntegrityError as e: 
 	   		if 'UNIQUE constraint' in str(e.args):
-	   			pass"""
+	   			pass
 
 	#they give a 403 error for other methods
 	china_power_req = Request("https://chinapower.csis.org/podcasts/", headers = {'User-Agent' : 'Mozilla/5.0'})
