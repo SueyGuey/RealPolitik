@@ -10,7 +10,7 @@ class Article(models.Model):
 	site_url = models.URLField(default = "google.com")
 
 	class Meta:
-		unique_together = [["title","author"]]
+		unique_together = [["title","author"]] #preventing articles form repeated
 
 	def __str__(self):
 		return self.title
