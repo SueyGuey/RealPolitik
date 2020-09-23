@@ -2,11 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Article(models.Model):
-	title = models.CharField()
-	author = models.CharField(default = "Author")
+	title = models.CharField(max_length = 99)
+	author = models.CharField(max_length = 99,default = "Author")
 	image_url = models.URLField(null = True, blank = True)
 	url = models.URLField()
-	site = models.CharField(default = "News")
+	site = models.CharField(max_length = 99,default = "News")
 	site_url = models.URLField(default = "google.com")
 
 	class Meta:
