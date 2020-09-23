@@ -11,6 +11,8 @@ django-crispy-forms = "*"
 gunicorn = "*"
 django-heroku = "*"
 heroku = "*"
+bs4 = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.8"
