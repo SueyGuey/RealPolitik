@@ -29,7 +29,7 @@ def refresh(request):
    			if 'UNIQUE constraint' in str(e.args): #a repeat article
    				pass
 
-	"""foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
+	foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
 	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
 	foreign_affairs = foreign_affairs_soup.find_all('div', {'class' : 'magazine-list-item--image-link row'})
 	for headline in foreign_affairs[::-1]:
@@ -40,7 +40,7 @@ def refresh(request):
 		new_article.author = headline.find_all('h4', {'class':'magazine-author font-italic ls-0 mb-0 f-serif'})[0].text
 		new_article.site = "Foreign Affairs"
 		new_article.site_url = "https://www.foreignaffairs.com"
-		try: 
+		"""try: 
 			new_article.save()
 		except IntegrityError as e: 
 	   		if 'UNIQUE constraint' in str(e.args):
