@@ -28,7 +28,7 @@ def refresh(request):
 		except IntegrityError as e: 
    			if 'UNIQUE constraint' in str(e.args): #a repeat article
    				pass
-
+   	"""
 	foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
 	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
 	foreign_affairs = foreign_affairs_soup.find_all('div', {'class' : 'magazine-list-item--image-link row'})
@@ -171,7 +171,7 @@ def refresh(request):
 			new_article.save()
 		except IntegrityError as e: 
    			if 'UNIQUE constraint' in str(e.args):
-   				pass
+   				pass"""
 
 	return redirect("../")
 
