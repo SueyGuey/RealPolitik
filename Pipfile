@@ -13,6 +13,7 @@ django-heroku = "*"
 heroku = "*"
 bs4 = "*"
 beautifulsoup4 = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.8"
