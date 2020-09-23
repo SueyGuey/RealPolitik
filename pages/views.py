@@ -24,7 +24,7 @@ def refresh(request):
 		new_article.site = "Foreign Policy"
 		new_article.site_url = "https://foreignpolicy.com"
 		try:
-			new_article.save() #checks for erros
+			new_article.save() #checks for errors
 		except IntegrityError as e: 
    			if 'UNIQUE constraint' in str(e.args): #a repeat article
    				pass
@@ -175,7 +175,7 @@ def refresh(request):
 
 	return redirect("../")
 
-def getQuerySet(query = None):
+def getQuerySet(query = None): #for searching
 	queryset = []
 	queries = query.split(" ")
 	for q in queries:
@@ -190,9 +190,9 @@ def home(request, *args, **kwargs):
 	context = {}
 	if request.GET:
 		query = request.GET['q']
-		context['query'] = str(query)
+		context['query'] = str(query) #returns post relating to our search
 
-	articles = getQuerySet(query)[:-50:-1]
+	articles = getQuerySet(query)[:-50:-1] #gives us 50 most recent
 	context = {
 		'articles': articles
 	}
@@ -218,34 +218,6 @@ class CommentView(CreateView):
 
 	def get_success_url(self):#goes back to page
 		return reverse('ArticleDetail', kwargs={'pk': self.kwargs['pk']})
-
-
-"""
-#viewing each article with its comments
-class HomeDetailView(FormView, DetailView):
-	model = Article
-	form_class = AddComment
-	template_name = 'detail_article.html'
-	def get_context_data(self, **kwargs):
-		context = super(HomeDetailView, self).get_context_data(**kwargs)
-		context['form'] = self.get_form()
-		return context
-	def post(self, request, *args, **kwargs):
-		return FormView.post(self, request, *args, **kwargs)
-	def get_success_url(self): #goes back to page
-		return reverse('ArticleDetail', kwargs={'pk': self.kwargs['pk']})
-class ArticleFormView(FormView):
-	form_class = AddComment
-	def get_success_url(self):#goes back to page
-		return reverse('ArticleDetail', kwargs={'pk': self.kwargs['pk']})
-class HomeDetailView(DetailView):
-	model = Article
-	template_name = 'detail_article.html'
-	def get_context_data(self, **kwargs):
-		context = super(HomeDetailView, self).get_context_data(**kwargs)
-		context['form'] = ArticleFormView
-		return context"""
-
 
 def contact(request):
 	return render(request,"contact.html")
