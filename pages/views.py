@@ -46,6 +46,8 @@ def refresh(request):
 	   		if 'UNIQUE constraint' in str(e.args):
 	   			pass
 
+	return redirect("../")
+"""
 	#they give a 403 error for other methods
 	china_power_req = Request("https://chinapower.csis.org/podcasts/", headers = {'User-Agent' : 'Mozilla/5.0'})
 	china_power_page = urlopen(china_power_req).read()
@@ -173,7 +175,7 @@ def refresh(request):
    			if 'UNIQUE constraint' in str(e.args):
    				pass
 
-	return redirect("../")
+	return redirect("../")"""
 
 def getQuerySet(query = None):
 	queryset = []
