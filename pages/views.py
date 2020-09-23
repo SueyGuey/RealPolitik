@@ -29,7 +29,7 @@ def refresh(request):
    			if 'UNIQUE constraint' in str(e.args): #a repeat article
    				pass
 
-	foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
+	"""foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
 	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
 	foreign_affairs = foreign_affairs_soup.find_all('div', {'class' : 'magazine-list-item--image-link row'})
 	for headline in foreign_affairs[::-1]:
@@ -44,10 +44,8 @@ def refresh(request):
 			new_article.save()
 		except IntegrityError as e: 
 	   		if 'UNIQUE constraint' in str(e.args):
-	   			pass
+	   			pass"""
 
-	return redirect("../")
-"""
 	#they give a 403 error for other methods
 	china_power_req = Request("https://chinapower.csis.org/podcasts/", headers = {'User-Agent' : 'Mozilla/5.0'})
 	china_power_page = urlopen(china_power_req).read()
@@ -175,7 +173,7 @@ def refresh(request):
    			if 'UNIQUE constraint' in str(e.args):
    				pass
 
-	return redirect("../")"""
+	return redirect("../")
 
 def getQuerySet(query = None):
 	queryset = []
