@@ -178,7 +178,7 @@ def refresh(request):
 	return redirect("../")
 
 def Search(query = None): #for searching
-	if query != "":
+	if query != "" and query != " ":
 		queryset = []
 		queries = query.split(" ") #splits search into several words
 		for q in queries: #search each word
