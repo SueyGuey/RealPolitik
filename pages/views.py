@@ -10,6 +10,7 @@ from urllib.request import urlopen, Request
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from operator import attrgetter
 
 requests.packages.urllib3.disable_warnings()
 def refresh(request):
@@ -177,16 +178,13 @@ def refresh(request):
 	return redirect("../")
 
 def Search(query = None): #for searching
-	if query:
-		queryset = []
-		queries = query.split(" ") #splits search into several words
-		for q in queries: #search each word
-			posts = Article.objects.filter(Q(title__icontains = q)).distinct()
-			for post in posts:
-				queryset.append(post)
-		return list(set(queryset))
-	else: #no search
-		return Article.objects.all()
+	queryset = []
+	queries = query.split(" ") #splits search into several words
+	for q in queries: #search each word
+		posts = Article.objects.filter(Q(title__icontains = q)).distinct()
+		for post in posts:
+			queryset.append(post)
+	return list(set(queryset))
 
 def home(request, *args, **kwargs):
 	query = ""
@@ -195,7 +193,7 @@ def home(request, *args, **kwargs):
 		query = request.GET.get('q','')
 		context['query'] = str(query) #returns post relating to our search
 	
-	articles = Search(query)[::-1] #gives it most recent order
+	articles = sorted(Search(query), key = attrgetter('time_added'), reverse = True) #gives it most recent order
 
 	page_num = request.GET.get('page',1)
 	pgntr = Paginator(articles, 10) #divides it into pages of 10 articles

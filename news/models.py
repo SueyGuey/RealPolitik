@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Article(models.Model):
 	title = models.TextField()
@@ -8,6 +9,7 @@ class Article(models.Model):
 	url = models.TextField()
 	site = models.TextField(max_length = 99,default = "News")
 	site_url = models.URLField(default = "google.com")
+	time_added = models.DateTimeField(auto_now_add = True)
 
 	class Meta:
 		unique_together = [["title","author"]] #preventing articles from repeating
