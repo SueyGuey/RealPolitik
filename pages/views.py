@@ -195,7 +195,7 @@ def home(request, *args, **kwargs):
 		query = request.GET.get('q','')
 		context['query'] = str(query) #returns post relating to our search
 
-	articles = getQuerySet(query)[::-1] #gives it most recent order
+	articles = getQuerySet(query) #gives it most recent order
 
 	page_num = request.GET.get('page',1)
 	pgntr = Paginator(articles, 10) #divides it into pages of 10 articles
