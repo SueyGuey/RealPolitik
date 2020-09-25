@@ -10,6 +10,7 @@ from urllib.request import urlopen, Request
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from operator import attrgetter
 
 requests.packages.urllib3.disable_warnings()
 def refresh(request):
@@ -195,7 +196,7 @@ def home(request, *args, **kwargs):
 		query = request.GET.get('q','')
 		context['query'] = str(query) #returns post relating to our search
 
-	articles = getQuerySet(query) #gives it most recent order
+	articles = sorted(getQuerySet(query), key = attrgetter('time_added') , reverse = True) #gives it most recent order
 
 	page_num = request.GET.get('page',1)
 	pgntr = Paginator(articles, 10) #divides it into pages of 10 articles

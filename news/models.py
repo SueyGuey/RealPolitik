@@ -9,6 +9,8 @@ class Article(models.Model):
 	url = models.TextField()
 	site = models.TextField(max_length = 99,default = "News")
 	site_url = models.URLField(default = "google.com")
+	#time_added = models.DateTimeField(auto_now_add = True)
+	time_added = models.DateTimeField(default = timezone.now())
 
 	class Meta:
 		unique_together = [["title","author"]] #preventing articles from repeating
