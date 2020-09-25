@@ -9,6 +9,7 @@ import requests
 from urllib.request import urlopen, Request
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 requests.packages.urllib3.disable_warnings()
 def refresh(request):
@@ -189,13 +190,23 @@ def home(request, *args, **kwargs):
 	query = ""
 	context = {}
 	if request.GET:
-		query = request.GET['q']
+		query = request.GET.get('q','')
 		context['query'] = str(query) #returns post relating to our search
 
-	articles = getQuerySet(query)[:-50:-1] #gives us 50 most recent
-	context = {
-		'articles': articles
-	}
+	articles = getQuerySet(query)[::-1] #gives it most recent order
+
+	page_num = request.GET.get('page',1)
+	pgntr = Paginator(articles, 10) #divides it into pages of 10 articles
+
+	#error checking
+	try:
+		articles = pgntr.page(page_num)
+	except EmptyPage:
+		articles = pgntr.page(pgntr.num_pages) #page doesn't exist so we go to page 1
+	except PageNotAnInteger:
+		articles = pgntr.page(1) #page not an int
+
+	context['articles'] = articles
 
 	return render(request,"home.html",context)
 

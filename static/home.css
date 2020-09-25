@@ -37,7 +37,7 @@
 }
 
 #content {
-	width: 670px;
+	width: 1000px;
 	float: left;
 }
 
@@ -89,6 +89,15 @@
 	height: 50px;
 	width: 666px;
 }
+
 .comment_heading {
 	font-weight: bold;
+}
+
+.rhs {
+	margin-left: 880px;
+}
+
+.page_num{
+	margin-left: 475px;
 }
