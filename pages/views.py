@@ -10,7 +10,6 @@ from urllib.request import urlopen, Request
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from operator import attrgetter
 
 requests.packages.urllib3.disable_warnings()
 def refresh(request):
@@ -38,6 +37,8 @@ def refresh(request):
 		new_article = Article()
 		new_article.title = headline.find_all('h3', {'class':'article-card-title font-weight-bold ls-0 mb-0 f-sans'})[0].text
 		new_article.image_url = headline.find_all('img',{'class':'b-lazy b-lazy-ratio magazine-list-item--image d-none d-md-block'})[0]['data-src']
+		if len(new_article.image_url) > 199:
+			new_article.image_url = 'https://subscribe.foreignaffairs.com/FAF/pub_templates/faf/images/logo.png'
 		new_article.url = headline.find_all('a', {'class':'d-block flex-grow-1'})[0]['href']
 		new_article.author = headline.find_all('h4', {'class':'magazine-author font-italic ls-0 mb-0 f-serif'})[0].text
 		new_article.site = "Foreign Affairs"
@@ -177,13 +178,14 @@ def refresh(request):
 
 	return redirect("../")
 
-def Search(query = None): #for searching
+def getQuerySet(query = None): #for searching
 	queryset = []
-	queries = query.split(" ") #splits search into several words
-	for q in queries: #search each word
+	queries = query.split(" ")
+	for q in queries:
 		posts = Article.objects.filter(Q(title__icontains = q)).distinct()
 		for post in posts:
 			queryset.append(post)
+
 	return list(set(queryset))
 
 def home(request, *args, **kwargs):
@@ -192,9 +194,9 @@ def home(request, *args, **kwargs):
 	if request.GET:
 		query = request.GET.get('q','')
 		context['query'] = str(query) #returns post relating to our search
-	
-	articles = Search(query)[::-1] #gives it most recent order
-	
+
+	articles = getQuerySet(query)[::-1] #gives it most recent order
+
 	page_num = request.GET.get('page',1)
 	pgntr = Paginator(articles, 10) #divides it into pages of 10 articles
 
