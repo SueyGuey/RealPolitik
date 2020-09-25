@@ -10,7 +10,8 @@ def register(request):
 		if form.is_valid():
 			form.save()
 			username = form.cleaned_data.get('username')
-			messages.success(request, f'Account created successfully, you can now login')
+			#creates a message on our main page
+			messages.success(request, f'Account created successfully!')
 			return redirect('login')
 	else:
 		form = UserRegistrationForm()
@@ -18,6 +19,7 @@ def register(request):
 
 @login_required
 def profile(request):
+	#viewing your profile and then updating
 	if request.method == 'POST':
 		userupdate = UserUpdateForm(request.POST, instance=request.user)
 		profileupdate = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)

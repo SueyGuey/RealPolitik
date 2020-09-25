@@ -4,7 +4,7 @@ from news.models import Comment
 class AddComment(forms.ModelForm):
 	class Meta:
 		model = Comment
-		fields = ['content']
+		fields = ['content'] #the comment itself
 
 		widgets = {
 			'content': forms.Textarea(attrs = {'class': 'form-control'})
