@@ -176,15 +176,17 @@ def refresh(request):
 
 	return redirect("../")
 
-def getQuerySet(query = None): #for searching
-	queryset = []
-	queries = query.split(" ")
-	for q in queries:
-		posts = Article.objects.filter(Q(title__icontains = q)).distinct()
-		for post in posts:
-			queryset.append(post)
-
-	return list(set(queryset))
+def Search(query = None): #for searching
+	if query:
+		queryset = []
+		queries = query.split(" ") #splits search into several words
+		for q in queries: #search each word
+			posts = Article.objects.filter(Q(title__icontains = q)).distinct()
+			for post in posts:
+				queryset.append(post)
+		return list(set(queryset))
+	else: #no search
+		return Article.objects.all()
 
 def home(request, *args, **kwargs):
 	query = ""
@@ -192,8 +194,8 @@ def home(request, *args, **kwargs):
 	if request.GET:
 		query = request.GET.get('q','')
 		context['query'] = str(query) #returns post relating to our search
-
-	articles = getQuerySet(query)[::-1] #gives it most recent order
+	
+	articles = Search(query)[::-1] #gives it most recent order
 
 	page_num = request.GET.get('page',1)
 	pgntr = Paginator(articles, 10) #divides it into pages of 10 articles

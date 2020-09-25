@@ -95,7 +95,12 @@
 }
 
 .rhs {
-	margin-left: 880px;
+	position: relative;
+    float: right;
+}
+
+.rhs, .lhs{
+	display: inline-table;
 }
 
 .page_num{

@@ -35,7 +35,7 @@
 			</div>
 		{% endfor %}
 		{% if articles.has_previous %}
-			<a href = "{% url 'home' %}?page={{articles.previous_page_number}}"> << Previous Page </a>
+			<a href = "{% url 'home' %}?page={{articles.previous_page_number}}" class = "lhs"> << Previous Page </a>
 		{% endif %}
 		{% if articles.has_next %}
 			<a href = "{% url 'home' %}?page={{articles.next_page_number}}" class = "rhs"> Next Page >> </a>
