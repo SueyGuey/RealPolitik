@@ -30,8 +30,7 @@ def refresh(request):
 		except IntegrityError as e: 
    			if 'UNIQUE constraint' in str(e.args): #a repeat article
    				pass
-   	return redirect("../")
-   	"""
+
 	foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
 	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
 	foreign_affairs = foreign_affairs_soup.find_all('div', {'class' : 'magazine-list-item--image-link row'})
@@ -176,16 +175,19 @@ def refresh(request):
    			if 'UNIQUE constraint' in str(e.args):
    				pass
 
-	return redirect("../")"""
+	return redirect("../")
 
 def Search(query = None): #for searching
-	queryset = []
-	queries = query.split(" ") #splits search into several words
-	for q in queries: #search each word
-		posts = Article.objects.filter(Q(title__icontains = q)).distinct()
-		for post in posts:
-			queryset.append(post)
-	return list(set(queryset))
+	if query != "":
+		queryset = []
+		queries = query.split(" ") #splits search into several words
+		for q in queries: #search each word
+			posts = Article.objects.filter(Q(title__icontains = q)).distinct()
+			for post in posts:
+				queryset.append(post)
+		return list(set(queryset))
+	else:
+		return Article.objects.all()
 
 def home(request, *args, **kwargs):
 	query = ""
@@ -194,8 +196,8 @@ def home(request, *args, **kwargs):
 		query = request.GET.get('q','')
 		context['query'] = str(query) #returns post relating to our search
 	
-	articles = sorted(Search(query), key = attrgetter('time_added'), reverse = True) #gives it most recent order
-
+	articles = Search(query)[::-1] #gives it most recent order
+	
 	page_num = request.GET.get('page',1)
 	pgntr = Paginator(articles, 10) #divides it into pages of 10 articles
 
