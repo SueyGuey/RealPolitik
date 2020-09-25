@@ -27,8 +27,7 @@
 					</a>
 					<div class = "site-info">
 						<p class = "author"> {{ article.author }}</p>
-						<h5 class = "separator"> | </h5>
-						<a class = "website" href = "{{ article.site_url }}" target="_blank">{{ article.site }} </a>
+						
 					</div>
 					<a class = "comment" href = "{% url 'ArticleDetail' article.pk %}">Comment </a>
 				</div>
