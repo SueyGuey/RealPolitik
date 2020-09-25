@@ -12,25 +12,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from operator import attrgetter
 
-"""
-	foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
-	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
-	foreign_affairs = foreign_affairs_soup.find_all('div', {'class' : 'magazine-list-item--image-link row'})
-	for headline in foreign_affairs[::-1]:
-		new_article = Article()
-		new_article.title = headline.find_all('h3', {'class':'article-card-title font-weight-bold ls-0 mb-0 f-sans'})[0].text
-		new_article.image_url = headline.find_all('img',{'class':'b-lazy b-lazy-ratio magazine-list-item--image d-none d-md-block'})[0]['data-src']
-		new_article.url = headline.find_all('a', {'class':'d-block flex-grow-1'})[0]['href']
-		new_article.author = headline.find_all('h4', {'class':'magazine-author font-italic ls-0 mb-0 f-serif'})[0].text
-		new_article.site = "Foreign Affairs"
-		new_article.site_url = "https://www.foreignaffairs.com"
-		try: 
-			new_article.save()
-		except IntegrityError as e: 
-	   		if 'UNIQUE constraint' in str(e.args):
-	   			pass
-"""
-
 requests.packages.urllib3.disable_warnings()
 def refresh(request):
 	foreign_policy_req = requests.get("https://foreignpolicy.com/category/latest/")
@@ -49,6 +30,23 @@ def refresh(request):
 		except IntegrityError as e: 
    			if 'UNIQUE constraint' in str(e.args): #a repeat article
    				pass
+
+	foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
+	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
+	foreign_affairs = foreign_affairs_soup.find_all('div', {'class' : 'magazine-list-item--image-link row'})
+	for headline in foreign_affairs[::-1]:
+		new_article = Article()
+		new_article.title = headline.find_all('h3', {'class':'article-card-title font-weight-bold ls-0 mb-0 f-sans'})[0].text
+		new_article.image_url = headline.find_all('img',{'class':'b-lazy b-lazy-ratio magazine-list-item--image d-none d-md-block'})[0]['data-src']
+		new_article.url = headline.find_all('a', {'class':'d-block flex-grow-1'})[0]['href']
+		new_article.author = headline.find_all('h4', {'class':'magazine-author font-italic ls-0 mb-0 f-serif'})[0].text
+		new_article.site = "Foreign Affairs"
+		new_article.site_url = "https://www.foreignaffairs.com"
+		try: 
+			new_article.save()
+		except IntegrityError as e: 
+	   		if 'UNIQUE constraint' in str(e.args):
+	   			pass
 
 	#they give a 403 error for other methods
 	china_power_req = Request("https://chinapower.csis.org/podcasts/", headers = {'User-Agent' : 'Mozilla/5.0'})
@@ -180,16 +178,13 @@ def refresh(request):
 	return redirect("../")
 
 def Search(query = None): #for searching
-	if query != "" and query != " ":
-		queryset = []
-		queries = query.split(" ") #splits search into several words
-		for q in queries: #search each word
-			posts = Article.objects.filter(Q(title__icontains = q)).distinct()
-			for post in posts:
-				queryset.append(post)
-		return list(set(queryset))
-	else:
-		return Article.objects.all()
+	queryset = []
+	queries = query.split(" ") #splits search into several words
+	for q in queries: #search each word
+		posts = Article.objects.filter(Q(title__icontains = q)).distinct()
+		for post in posts:
+			queryset.append(post)
+	return list(set(queryset))
 
 def home(request, *args, **kwargs):
 	query = ""
