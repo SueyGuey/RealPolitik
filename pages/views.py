@@ -12,24 +12,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from operator import attrgetter
 
-requests.packages.urllib3.disable_warnings()
-def refresh(request):
-	foreign_policy_req = requests.get("https://foreignpolicy.com/category/latest/")
-	foreign_policy_soup = BeautifulSoup(foreign_policy_req.content, "html.parser")
-	foreign_policy = foreign_policy_soup.find_all('div', {'class': 'excerpt-content--list content-block'})
-	for headline in foreign_policy[::-1]:
-		new_article = Article()
-		new_article.title = headline.find_all('h3', {'class':'hed'})[0].text
-		new_article.url= headline.find_all('a', {'class':'hed-heading -excerpt'})[0]['href']
-		new_article.image_url = headline.find_all('img')[0]['data-src']
-		new_article.author = headline.find_all('a', {'class':'author'})[0].text
-		new_article.site = "Foreign Policy"
-		new_article.site_url = "https://foreignpolicy.com"
-		try:
-			new_article.save() #checks for errors
-		except IntegrityError as e: 
-   			if 'UNIQUE constraint' in str(e.args): #a repeat article
-   				pass
 """
 	foreign_affairs_req = requests.get("https://www.foreignaffairs.com")
 	foreign_affairs_soup = BeautifulSoup(foreign_affairs_req.content, "html.parser")
@@ -48,6 +30,25 @@ def refresh(request):
 	   		if 'UNIQUE constraint' in str(e.args):
 	   			pass
 """
+
+requests.packages.urllib3.disable_warnings()
+def refresh(request):
+	foreign_policy_req = requests.get("https://foreignpolicy.com/category/latest/")
+	foreign_policy_soup = BeautifulSoup(foreign_policy_req.content, "html.parser")
+	foreign_policy = foreign_policy_soup.find_all('div', {'class': 'excerpt-content--list content-block'})
+	for headline in foreign_policy[::-1]:
+		new_article = Article()
+		new_article.title = headline.find_all('h3', {'class':'hed'})[0].text
+		new_article.url= headline.find_all('a', {'class':'hed-heading -excerpt'})[0]['href']
+		new_article.image_url = headline.find_all('img')[0]['data-src']
+		new_article.author = headline.find_all('a', {'class':'author'})[0].text
+		new_article.site = "Foreign Policy"
+		new_article.site_url = "https://foreignpolicy.com"
+		try:
+			new_article.save() #checks for errors
+		except IntegrityError as e: 
+   			if 'UNIQUE constraint' in str(e.args): #a repeat article
+   				pass
 
 	#they give a 403 error for other methods
 	china_power_req = Request("https://chinapower.csis.org/podcasts/", headers = {'User-Agent' : 'Mozilla/5.0'})
