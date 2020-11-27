@@ -22,7 +22,11 @@ def refresh(request):
 		new_article.title = headline.find_all('h3', {'class':'hed'})[0].text
 		new_article.url= headline.find_all('a', {'class':'hed-heading -excerpt'})[0]['href']
 		new_article.image_url = headline.find_all('img')[0]['data-src']
-		new_article.author = headline.find_all('a', {'class':'author'})[0].text
+		auth = headline.find_all('a', {'class':'author'})
+		if len(auth) != 0:
+			new_article.author = auth[0].text
+		else:
+			new_article.author = "FP"
 		new_article.site = "Foreign Policy"
 		new_article.site_url = "https://foreignpolicy.com"
 		try:
@@ -112,7 +116,7 @@ def refresh(request):
 	   		if 'UNIQUE constraint' in str(e.args):
 	   			pass
 
-	AP_FP_req = Request("https://apnews.com/hub/foreign-policy", headers = {'User-Agent' : 'Mozilla/5.0'})
+	"""AP_FP_req = Request("https://apnews.com/hub/foreign-policy", headers = {'User-Agent' : 'Mozilla/5.0'})
 	AP_FP_page = urlopen(AP_FP_req).read()
 	AP_IL_req = Request("https://apnews.com/hub/international-relations", headers = {'User-Agent' : 'Mozilla/5.0'})
 	AP_IL_page = urlopen(AP_IL_req).read()
@@ -140,7 +144,7 @@ def refresh(request):
 			new_article.save() #checks for errors
 		except IntegrityError as e: 
    			if 'UNIQUE constraint' in str(e.args): #a repeat article
-   				pass
+   				pass"""
 
    	#lowy institute
 	LI_req = Request("https://www.lowyinstitute.org/the-interpreter/archive", headers = {'User-Agent' : 'Mozilla/5.0'})
