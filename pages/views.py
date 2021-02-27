@@ -62,16 +62,14 @@ def refresh(request):
 
 	for headline in china_power[::-1]:
 		#finding author
-		disc = headline.find_all('p')[0].text #description has the author's name
+		disc = headline.find_all('h2', {'class':'entry-title'})[0].text #description has the author's name
 		list_disc = disc.split() #find it in the text
 		record = False
 		list_auth = []
 		for name in list_disc:
-			if name == "joins": #ends the name at the join
-				break;
 			if record:
 				list_auth.append(name) #add the name
-			if name == "episode,": #start at 'episode,'
+			if name == "with": #start at 'episode,'
 				record = True;
 
 		new_article = Article()
