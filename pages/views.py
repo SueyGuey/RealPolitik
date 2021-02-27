@@ -65,23 +65,23 @@ def refresh(request):
 		disc = headline.find_all('p')[0].text #description has the author's name
 		list_disc = disc.split() #find it in the text
 		record = False
-		index = 0
 		list_auth = []
-		while index > -1:
-			tmp = list_disc[index]
-			if tmp == "joins": #ends the name at the join
+		for name in list_disc:
+			if name == "joins": #ends the name at the join
 				break;
 			if record:
-				list_auth.append(tmp) #add the name
-			if tmp == "episode,": #start at 'episode,'
+				list_auth.append(name) #add the name
+			if name == "episode,": #start at 'episode,'
 				record = True;
-			index = index + 1
 
 		new_article = Article()
 		new_article.title = headline.find_all('h2', {'class':'entry-title'})[0].text
 		new_article.image_url = "https://megaphone.imgix.net/podcasts/722b9c2a-e6e1-11ea-a520-3349f6671499/image/uploads_2F1598366366917-v9rdxhpawhc-bee946f884ea9a141d33af2322074d0d_2F_ART_ChinaPower.jpg?ixlib=rails-2.1.2&w=400&h=400"
 		new_article.url = headline.find_all('a')[0]['href']
-		new_article.author = " ".join(list_auth) + " & Bonnie Glaser"
+		if len(list_auth) != 0:
+			new_article.author = " ".join(list_auth) + " & Bonnie Glaser"
+		else:
+			new_article.author = "Bonnie Glaser"
 		new_article.site = "China Power Podcasts"
 		new_article.site_url = "https://chinapower.csis.org/podcasts/"
 		try: 
